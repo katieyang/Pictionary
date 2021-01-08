@@ -1,0 +1,11 @@
+Setup
+1. Download node.js
+2. npm init (fill in details)
+3. npm install express --save
+4. npm install socket.io --save
+
+Uploading to heroku
+1. Download heroku CLI
+2. Make sure it's a git repo
+3. heroku create (for new app)
+4. git push heroku main

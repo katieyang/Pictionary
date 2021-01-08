@@ -1,0 +1,63 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font: 18px Helvetica, Arial;
+}
+canvas {
+	float: left;
+	display: block;
+}
+form {
+	background: #d4e4ff; 
+	height: 35px;
+	padding: 1px; 
+	float: left;
+	width: 400px;
+}
+form input {
+	padding: 1px; 
+	width: 328px;
+	height: 35px;
+}
+form button {
+	width: 70px;
+	height: 35px;
+	background: rgb(130, 224, 255); 
+	border: none; 
+	padding: 1px; 
+}
+.scoreMsg {
+	color: orange;
+}
+.systemMsg {
+	color: blue;
+}
+#chatbox {
+	float:left;
+	height:600px;
+	background: #d4e4ff;
+}
+#messageHolder {
+	height:563px;
+	overflow-y: scroll;  
+	display: flex;
+	flex-direction: column-reverse;
+	width: 400px;
+    word-wrap: break-word;
+}
+#messages {
+	list-style-type: none; 
+	margin: 0; 
+	padding: 0;
+}
+#messages li {
+	min-height: 20px;
+	padding: 5px 10px;
+}
+#messages li:nth-child(odd) {
+	background: #669fff;
+}
+#messages li:nth-child(even) {
+	background: #d4e4ff;
+}
