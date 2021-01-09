@@ -270,8 +270,30 @@ function Game(players){
 
 	this.endTurn = function(){
 		//Emit that the turn is over and the scores
-		io.sockets.emit("chat message",new ChatMessage("", "Round " + this.currentRound + " Turn " + this.alreadyDrawn.length + " is over. The correct answer was:" + this.chosenWord, "system"));
-		io.sockets.emit("chat message", new ChatMessage("", [...guessedCorrectly] + "guess correctly", "system"))
+		io.sockets.emit("chat message",new ChatMessage("", "Round " + this.currentRound + " Turn " + this.alreadyDrawn.length + " is over.", "system"));
+		io.sockets.emit("chat message", new ChatMessage("", "The correct answer was: " + this.chosenWord, "system"));
+		if(this.guessedCorrectly != []){
+			var guessedCorrectlyMsg = "";
+			if (this.guessedCorrectly.length == 1){
+				guessedCorrectlyMsg += this.guessedCorrectly[0] + " ";
+			} else {
+				for(var i=0; i<this.guessedCorrectly.length;i++){
+					if(i == this.guessedCorrectly.length-1){
+						guessedCorrectlyMsg += "and ";
+					}
+					guessedCorrectlyMsg += this.guessedCorrectly[i];
+					if (i != this.guessedCorrectly.length-2 && i != this.guessedCorrectly.length-1){
+						guessedCorrectlyMsg += ", "
+					} else {
+						guessedCorrectlyMsg += " "
+					}
+				}
+			}
+			guessedCorrectlyMsg += "guessed correctly.";
+			io.sockets.emit("chat message", new ChatMessage("", guessedCorrectlyMsg, "system"));
+		} else {
+			io.sockets.emit("chat message", new ChatMessage("", "No one guessed correctly.", "system"));
+		}
 		io.sockets.emit("chat message",new ChatMessage("", "The current scores are:", "system"));
 		for(player in this.players){
 			io.sockets.emit("chat message",new ChatMessage("", this.players[player].username +": " + this.players[player].score, "score"));
