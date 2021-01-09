@@ -151,7 +151,7 @@ function newConnection(socket) {
 	function sendDrawing(mousePos){ //mousePos = [mouseX,mouseY,pmouseX,pmouseY]
 		if(game != ""){
 			if(game.drawer == socket.id){
-				io.sockets.emit("drawing coordinates", mousePos);
+				socket.broadcast.emit("drawing coordinates", mousePos);
 			}
 		}
 	}

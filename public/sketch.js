@@ -83,6 +83,9 @@ function draw() { //pass what is being drawn over -> if game is happening and th
 
 function mouseDragged(){
   if (mouseButton === LEFT && !(mouseX < 40 && mouseY < 40)) {
+    stroke("black");
+    strokeWeight(5);
+    line(mouseX,mouseY,pmouseX,pmouseY);
     socket.emit("drawing coordinates",[mouseX,mouseY,pmouseX,pmouseY]);
   }
 }
