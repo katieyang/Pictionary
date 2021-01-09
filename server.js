@@ -136,7 +136,7 @@ function newConnection(socket) {
 				game.players[socket.id].score += Math.ceil(game.timeLeft/timePerTurn * 15);
 				game.players[game.drawer].score += 5;
 				game.cantChat.push(socket.id);
-				game.guessedCorrectly.push(socket.id);
+				game.guessedCorrectly.push(game.players[socket.id].username);
 
 				//check if everyone has guessed correctly, if so turn should end
 				if(game.guessedCorrectly.length == Object.keys(game.players).length - 1){
@@ -270,7 +270,9 @@ function Game(players){
 
 	this.endTurn = function(){
 		//Emit that the turn is over and the scores
-		io.sockets.emit("chat message",new ChatMessage("", "Round " + this.currentRound + " Turn " + this.alreadyDrawn.length + " is over. The current scores are:", "system"));
+		io.sockets.emit("chat message",new ChatMessage("", "Round " + this.currentRound + " Turn " + this.alreadyDrawn.length + " is over. The correct answer was:" + this.chosenWord, "system"));
+		io.sockets.emit("chat message", new ChatMessage("", [...guessedCorrectly] + "guess correctly", "system"))
+		io.sockets.emit("chat message",new ChatMessage("", "The current scores are:", "system"));
 		for(player in this.players){
 			io.sockets.emit("chat message",new ChatMessage("", this.players[player].username +": " + this.players[player].score, "score"));
 		}
