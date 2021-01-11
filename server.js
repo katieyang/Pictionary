@@ -70,8 +70,6 @@ function newConnection(socket) {
 		}
   	});
 
-	// everyone outside of the game should eventually be sent to another room!
-
 	socket.on("username", updateusername);
 	socket.on("chat message", chatMsg);
 	socket.on("drawing coordinates", sendDrawing);
@@ -119,6 +117,7 @@ function newConnection(socket) {
 			}
 		}
 
+		// start new game if there are at least 3 players in the room and room leader types 'start'
 		if(chat == "start" && socket.id == roomLeader){
 			if(Object.keys(players).length >= 3) {
 				game = new Game(players);
@@ -132,9 +131,10 @@ function newConnection(socket) {
 		if (game != "" && Object.keys(game.players).indexOf(socket.id) != -1){
 			if(chat.toLowerCase() == game.chosenWord){
 				io.to(socket.id).emit("chat message", new ChatMessage("", "You guessed correctly!", "system"))
+				socket.broadcast.emit("chat message", new ChatMessage("", game.players[socket.id].username + " has guessed the word.", "system"))
 				//give the correct guesser points based on time left, drawer 5 points/correct guess
-				game.players[socket.id].score += Math.ceil(game.timeLeft/timePerTurn * 15);
-				game.players[game.drawer].score += 5;
+				game.players[socket.id].scoreChange = Math.ceil(game.timeLeft/timePerTurn * 15);
+				game.players[game.drawer].scoreChange += 5;
 				game.cantChat.push(socket.id);
 				game.guessedCorrectly.push(game.players[socket.id].username);
 
@@ -160,6 +160,8 @@ function newConnection(socket) {
 		if(game != ""){
 			if(game.drawer == socket.id){
 				io.sockets.emit("clear", 1);
+				io.sockets.emit("timer", game.timeLeft);
+				io.sockets.emit("round_turn", [game.currentRound, game.alreadyDrawn.length, game.players[game.drawer].username]);
 			}
 		}
 	}
@@ -222,6 +224,15 @@ function Game(players){
 		}
 		// Announce what round and turn it is
 		io.sockets.emit("chat message",new ChatMessage("","Round " + this.currentRound + "Turn " + this.alreadyDrawn.length, "system"));
+		io.sockets.emit("round_turn", [this.currentRound, this.alreadyDrawn.length, this.players[this.drawer].username]);
+		// Allow drawer to draw and no one else
+		io.to(this.drawer).emit("drawer", true);
+		for(player in this.players){
+			if (player != this.drawer){
+				io.to(player).emit("drawer", false);
+			}
+		}
+
 		this.newWord();
 	}
 
@@ -296,7 +307,9 @@ function Game(players){
 		}
 		io.sockets.emit("chat message",new ChatMessage("", "The current scores are:", "system"));
 		for(player in this.players){
-			io.sockets.emit("chat message",new ChatMessage("", this.players[player].username +": " + this.players[player].score, "score"));
+			io.sockets.emit("chat message",new ChatMessage("", this.players[player].username +": " + this.players[player].score + " + " + this.players[player].scoreChange + " = " + (this.players[player].score + this.players[player].scoreChange), "score"));
+			this.players[player].score += this.players[player].scoreChange;
+			this.players[player].scoreChange = 0;
 		}
 		// check if the round is over
 		if(Object.keys(this.players).length == this.alreadyDrawn.length){
@@ -318,5 +331,6 @@ function Game(players){
 function Player(username){
 	this.username = username;
 	this.score = 0;
+	this.scoreChange = 0;
 }
 

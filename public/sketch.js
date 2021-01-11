@@ -2,6 +2,7 @@ var socket;
 var userNameSubmitted = false;
 var mousePos = "";
 var victorySFX;
+var is_drawer = false;
 
 function setup() {
   let canvas = createCanvas(600, 600);
@@ -12,6 +13,7 @@ function setup() {
   
   socket.on("showModal",showModal);
   socket.on("victory",playVictory);
+  socket.on("drawer",modDrawer);
 
   //Button panel
   clearButton = createButton("Clear");
@@ -79,10 +81,11 @@ function draw() { //pass what is being drawn over -> if game is happening and th
   socket.on("clear", clearIt);
   socket.on("timer", drawTime);
   socket.on("winner", drawWinner);
+  socket.on("round_turn", drawRoundTurn);
 }
 
 function mouseDragged(){
-  if (mouseButton === LEFT && !(mouseX < 40 && mouseY < 40)) {
+  if (mouseButton === LEFT && !(mouseX < 40 && mouseY < 40) && is_drawer) {
     stroke("black");
     strokeWeight(5);
     line(mouseX,mouseY,pmouseX,pmouseY);
@@ -93,6 +96,15 @@ function mouseDragged(){
 function clearIt(){ //need to pass this along as well to server!
   clear();
   background(220);
+}
+
+function drawRoundTurn(round_turn){
+  fill("black");
+  textSize(24);
+  textAlign(CENTER, TOP);
+  text("Round " + round_turn[0] + " Turn " + round_turn[1], 300, 20);
+  textSize(24);
+  text("Drawer: " + round_turn[2], 300, 50);
 }
 
 function drawTime(time){
@@ -116,6 +128,10 @@ function drawWinner(winner){
   text("Winner", 300, 200);
   textSize(24);
   text(winner, 300, 300);
+}
+
+function modDrawer(isDrawer){
+  is_drawer = isDrawer;
 }
 
 function playVictory(){
