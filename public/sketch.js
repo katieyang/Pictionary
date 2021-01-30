@@ -14,6 +14,11 @@ function setup() {
   socket.on("showModal",showModal);
   socket.on("victory",playVictory);
   socket.on("drawer",modDrawer);
+  socket.on("drawing coordinates", updateMousePos);
+  socket.on("clear", clearIt);
+  socket.on("timer", drawTime);
+  socket.on("winner", drawWinner);
+  socket.on("round_turn", drawRoundTurn);
 
   //Button panel
   clearButton = createButton("Clear");
@@ -74,14 +79,6 @@ function setup() {
     //chatbox functionality end
   });
 // jQuery end
-}
-
-function draw() { //pass what is being drawn over -> if game is happening and this person is the drawer, then pass drawing back to all clients
-  socket.on("drawing coordinates", updateMousePos);
-  socket.on("clear", clearIt);
-  socket.on("timer", drawTime);
-  socket.on("winner", drawWinner);
-  socket.on("round_turn", drawRoundTurn);
 }
 
 function mouseDragged(){
