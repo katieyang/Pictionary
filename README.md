@@ -1,1 +1,1 @@
-Check it out here: https://seed-reflective-laundry.glitch.me/
+Was hosted on Glitch, which has since ended project hosting.
